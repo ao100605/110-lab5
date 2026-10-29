@@ -96,6 +96,7 @@ export class GameScreenView implements View {
 	 */
 	updateTimer(timeRemaining: number): void {
 		this.timerText.text(`Time: ${timeRemaining}`);
+		// console.log(timeRemaining);
 		this.group.getLayer()?.draw();
 	}
 
