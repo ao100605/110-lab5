@@ -2,7 +2,7 @@
 
 **Name: Akari Oh**
 
-**Tickets solved:** 1, 2, 3, 4, 5
+**Tickets solved:** 1, 2, 3, 4, 6
 
 ---
 
@@ -87,12 +87,15 @@ The stats line now shows the correct best score as 19.
      Explain why that code produced the behavior described in the ticket. -->
 
 **File / function:**
+randomizeLemonPosition() in GameScreenView
 
 **What was wrong:**
+The parenthesis for Math.round() did not include all of the expression when calculating the constants randomX and randomY.
 
 ### Fix
 
 <!-- What did you change, and why does that change fix the problem? -->
+Moved the closing parenthesis to the end: Math.round(Math.random() * (maxX - minX) + minX);
 
 ### How did you find it?
 
@@ -100,20 +103,81 @@ The stats line now shows the correct best score as 19.
 
 **What hypothesis ultimately led you to identify the buggy code, and why?**
 
+I hypothesized that something was wrong with the calculation for randomizing the lemon positions, so I went to randomizeLemonPosition() function in GameScreenView and found that the expression for calculating randomX and randomY had the parenthesis wrong.
+
+### Confirming the fix
+
+<!-- How did you confirm the problem is gone? -->
+After each click the lemon moves to a random position anywhere inside the play area.
+
+---
+
+## Ticket 4: Stuck on the Game Over screen
+
+### Actual cause
+
+<!-- Which file and function was the bug in, and what was wrong with the code?
+     Explain why that code produced the behavior described in the ticket. -->
+
+**File / function:**
+endGame() in GameScreenController file
+
+**What was wrong:**
+this.stopTimer; function is missing the parenthesis at the end so it's never called.
+
+### Fix
+
+<!-- What did you change, and why does that change fix the problem? -->
+Added the parenthesis for this.stopTimer(); so that the timer is stopped and doesn't keep decrementing and loading the results screen over and over again.
+
+### How did you find it?
+
 #### Backward tracing
 
 <!-- Start from the symptom you saw and work backwards, one step at a time,
      until you reach the buggy line. For each step, note where you looked
      and what you saw there. Add steps as needed. -->
 
-1. **Symptom:** The lemon only appears in the corners of the screen
-2. **Traced back to:** GameScreenView
-3. **Traced back to:**
-4. **Buggy code:** <!-- the file, function and line where the trace ended -->
+1. **Symptom:** the leaderboard was being fetched infinitely in the network and the gameover sound was playing infinitely
+2. **Traced back to:** showResultsFromServer() in ResultsScreenController must have been called multiple times -> only called in main when screen switches
+3. **Traced back to:** endGame() in GameScreenController
+4. **Buggy code:** this.stopTimer; is not running because it was missing parenthesis
 
-<!-- It is okay to use your judgement here in limiting the number of traceback steps. We want to understand your reasoning for how you discovered where the bug was -->
 
 ### Confirming the fix
 
 <!-- How did you confirm the problem is gone? -->
-After each click the lemon moves to a random position anywhere inside the play area.
+The results screen doen't continuously reload and the leaderboard is only updated once.
+
+---
+
+## Ticket 5: My high score disappeared from the leaderboard
+
+### Actual cause
+
+<!-- Which file and function was the bug in, and what was wrong with the code?
+     Explain why that code produced the behavior described in the ticket. -->
+
+**File / function:**
+app.post("/api/leaderboard", (req, res)... in index.ts
+
+**What was wrong:**
+The entries were sort in ascending order with entries.sort((a, b) => a.score - b.score);
+
+### Fix
+
+<!-- What did you change, and why does that change fix the problem? -->
+Switched a.score and b.score around to be entries.sort((a, b) => b.score - a.score); to sort in descending order.
+
+### How did you find it?
+
+#### Hypothesis testing
+
+**What hypothesis ultimately led you to identify the buggy code, and why?**
+
+I hypothesized that something was wrong with the sorting of the scores since the leaderboard was taking the lowest 5 scores instead of the top 5. So I went to index.ts and saw that it was sorting in ascending order instead of descending with entries.sort((a, b) => a.score - b.score);
+
+### Confirming the fix
+
+<!-- How did you confirm the problem is gone? -->
+The list shows the five highest scores, highest first.

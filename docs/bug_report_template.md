@@ -37,7 +37,7 @@ Copy the template below once for each ticket you solved.
 
 1. **Symptom:** <!-- what you saw, e.g. text on screen, console error -->
 2. **Traced back to:** <!-- where that came from, e.g. a function, a request in the Network tab, a server log -->
-3. **Traced back to:**
+3. **Traced back to:** 
 4. **Buggy code:** <!-- the file, function and line where the trace ended -->
 
 <!-- It is okay to use your judgement here in limiting the number of traceback steps. We want to understand your reasoning for how you discovered where the bug was -->
